@@ -83,6 +83,28 @@ function makeWin32ProcessTable(execFile, opts) {
   };
 }
 
+function makePosixProcessTable(execFile, opts) {
+  opts = opts || {};
+  if (typeof execFile !== 'function') throw new Error('makePosixProcessTable requires execFile');
+  const timeoutMs = Number(opts.timeoutMs) > 0 ? Number(opts.timeoutMs) : DEFAULT_TABLE_TIMEOUT_MS;
+  const selfPid = opts.selfPid != null ? Number(opts.selfPid) : ((typeof process !== 'undefined' && Number(process.pid)) || 0);
+  return function snapshot() {
+    return new Promise((resolve, reject) => {
+      execFile('ps', ['-A', '-o', 'pid=,ppid=,lstart='], { encoding: 'utf8', timeout: timeoutMs, maxBuffer: 32 * 1024 * 1024 }, (err, stdout) => {
+        if (err) return reject(new Error('process table query failed: ' + String((err && err.message) || err).slice(0, 300)));
+        const rows = [];
+        for (const line of String(stdout || '').split('\n')) {
+          const m = /^\s*(\d+)\s+(\d+)\s+([A-Z][a-z]{2}\s+[A-Z][a-z]{2}\s+\d+\s+\d+:\d+:\d+\s+\d+)/.exec(line);
+          if (m) rows.push({ pid: Number(m[1]), ppid: Number(m[2]), created: new Date(m[3]).getTime() });
+        }
+        if (!rows.length) return reject(new Error('process table query returned no rows'));
+        if (selfPid > 0 && !rows.some(r => r.pid === selfPid)) return reject(new Error('process table has no row for this process — refusing to trust it'));
+        resolve(rows);
+      });
+    });
+  };
+}
+
 function ownedTree(rows, spec) {
   spec = spec || {};
   const pid = Number(spec.pid);
@@ -151,4 +173,4 @@ async function confirmGone(o) {
   return { gone: false, unknown: false, survivors: survivors };
 }
 
-module.exports = { makeWin32ProcessTable, ownedTree, survivorsOf, confirmGone, DEFAULT_TABLE_TIMEOUT_MS, _internals: { parseTable, WIN_TABLE_SCRIPT, MAX_TREE } };
+module.exports = { makeWin32ProcessTable, makePosixProcessTable, ownedTree, survivorsOf, confirmGone, DEFAULT_TABLE_TIMEOUT_MS, _internals: { parseTable, WIN_TABLE_SCRIPT, MAX_TREE } };
