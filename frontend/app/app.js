@@ -827,6 +827,7 @@ const App = (() => {
       cerebras: 'CEREBRAS',
       starnet: 'STARNET MANAGED',
       ollama: 'OLLAMA',
+      mlx: 'MLX',
       'claude-cli': 'CLAUDE CODE',
       custom: 'CUSTOM'
     };
@@ -853,17 +854,18 @@ const App = (() => {
     // managed credits — its bearer is the linked device token, never a key the user pastes
     if (p === 'starnet' || p === 'starnet-cloud' || p === 'managed') return 'starnet';
     if (p === 'ollama' || p === 'ollama-local') return 'ollama';
+    if (p === 'mlx' || p === 'mlx-lm' || p === 'omlx') return 'mlx';
     if (p === 'claude-cli' || p === 'claude-code' || p === 'claude-code-cli') return 'claude-cli';
     if (p === 'custom' || p === 'openai-compatible' || p === 'local' || p === 'vllm' || p === 'lmstudio') return 'custom';
     return 'openrouter';
   }
   function providerNeedsKey(provider) {
     const p = normalizeProviderId(provider);
-    return p !== 'codex' && p !== 'grok' && p !== 'kimi' && p !== 'ollama' && p !== 'custom' && p !== 'starnet' && p !== 'claude-cli';
+    return p !== 'codex' && p !== 'grok' && p !== 'kimi' && p !== 'ollama' && p !== 'mlx' && p !== 'custom' && p !== 'starnet' && p !== 'claude-cli';
   }
   function providerUsesKeyBox(provider) {
     const p = normalizeProviderId(provider);
-    return p !== 'codex' && p !== 'grok' && p !== 'kimi' && p !== 'ollama' && p !== 'starnet' && p !== 'claude-cli';
+    return p !== 'codex' && p !== 'grok' && p !== 'kimi' && p !== 'ollama' && p !== 'mlx' && p !== 'starnet' && p !== 'claude-cli';
   }
   function providerNeedsBaseUrl(provider) {
     return normalizeProviderId(provider) === 'custom';
@@ -1614,6 +1616,7 @@ const App = (() => {
     perplexity: ['sonar-pro', 'sonar', 'sonar-reasoning-pro'],
     cerebras: ['llama-4-scout-17b-16e-instruct', 'llama3.1-8b', 'qwen-3-coder-480b'],
     ollama: ['qwen3:8b', 'llama3.1', 'qwen2.5-coder', 'mistral'],
+    mlx: ['qwen2.5-coder-32b-instruct-4bit', 'llama-3.1-8b-instruct', 'mistral-nemo-instruct-2407'],
     'claude-cli': ['claude-sonnet-5-5', 'claude-opus-5-5', 'claude-haiku-4-5-20251001'],   // [0] = the default pick; the live catalog adds the rest
     openrouter: ['gpt-5.5', 'anthropic/claude-sonnet-4.6', 'anthropic/claude-opus-4.8', 'openai/gpt-5', 'google/gemini-2.5-pro'],
     // #93: STARNET MANAGED's catalog is the routed vendor/model lineup — a bare 'gpt-5.5' (the openrouter row it used
@@ -1634,13 +1637,13 @@ const App = (() => {
     if (p !== normalizeProviderId(pickedProvider)) return;
     // DEFAULT = the curated MODEL_PICKS[provider][0] — NOT the alphabetical regex hit the old code used (which
     // drifted onto stale slugs while the right answer sat one inch below in the picks). defaultModelFor() covers
-    // providers without a curated pick (custom / ollama).
+    // providers without a curated pick (custom / ollama / mlx).
     const picks = MODEL_PICKS[p];
     let defId = (picks && picks[0] && picks[0].id) || defaultModelFor(p);
     // A LOCAL catalog is exactly what is installed. The seed slug ('llama3.1') is only a name Ollama resolves if that
     // exact tag was pulled; prefilling it over a machine that has only qwen3:8b woke the agent on a model that does not
     // exist and failed its first run. Default to an installed model instead — one Ollama says can call tools.
-    if (p === 'ollama' && list.length && !list.some(m => m && m.id === defId)) {
+    if ((p === 'ollama' || p === 'mlx') && list.length && !list.some(m => m && m.id === defId)) {
       const usable = list.find(m => m && m.supportsTools !== false) || list[0];
       if (usable && usable.id) defId = usable.id;
     }
@@ -1666,7 +1669,7 @@ const App = (() => {
       inp.placeholder = 'type a model slug — e.g. ' + (defId || 'gpt-5.5');
     }
     if (el('model-pop') && !el('model-pop').hidden) renderModelPop();   // live-refresh an open popover after a provider switch
-    // OLLAMA status = the catalog truth for this machine: a non-empty live list IS "ollama detected"; an empty one
+    // OLLAMA / MLX status = the catalog truth for this machine: a non-empty live list IS "ollama detected"; an empty one
     // reads "not detected yet" with the setup pointer — never a claim the sidecar didn't earn.
     if (p === 'ollama' && pickedProvider === 'ollama') {
       const os = el('ollama-status');
@@ -1674,6 +1677,15 @@ const App = (() => {
         os.textContent = list.length
           ? '● ollama detected on this machine · ' + list.length + ' local model' + (list.length === 1 ? '' : 's') + ' ready'
           : '○ ollama not detected yet — install it from ollama.com, pull a model, and it will show up here';
+      }
+    }
+
+    if (p === 'mlx' && pickedProvider === 'mlx') {
+      const os = el('mlx-status');
+      if (os) {
+        os.textContent = list.length
+          ? '● mlx detected on this machine · ' + list.length + ' local model' + (list.length === 1 ? '' : 's') + ' ready'
+          : '○ mlx not detected yet — install it, load a model, and it will show up here';
       }
     }
     updateHint();
@@ -2045,14 +2057,16 @@ const App = (() => {
     // OLLAMA (the free local path) wears its own honest block — visible only while picked; its status line is
     // repainted by loadModels() from the sidecar's live catalog for 127.0.0.1:11434.
     const isOllama = pickedProvider === 'ollama';
+    const isMlx = pickedProvider === 'mlx';
     { const ob = el('ollama-block'); if (ob) ob.classList.toggle('hidden', !isOllama); }
+    { const mb = el('mlx-block'); if (mb) mb.classList.toggle('hidden', !isMlx); }
     const isClaudeCli = pickedProvider === 'claude-cli';
     { const cb = el('claude-cli-block'); if (cb) cb.classList.toggle('hidden', !isClaudeCli); }
     if (isClaudeCli) refreshClaudeCliStatus(); else stopClaudeCliTimer();   // an in-flight sign-in resumes on re-pick
     // the BYOK note talks about your key on 127.0.0.1 / the OS keychain — irrelevant and contradictory on the
     // keyless subscription paths (no key at all), so hide the whole disclosure there. On BYOK it stays collapsed
     // behind its toggle (progressive disclosure) — the note's own .hidden is owned by #byok-toggle, not this switch.
-    { const bd = el('byok-disclose'); if (bd) bd.classList.toggle('hidden', isOAuth || isStarnet || isOllama || isClaudeCli); }   // ollama: no key exists to ask about
+    { const bd = el('byok-disclose'); if (bd) bd.classList.toggle('hidden', isOAuth || isStarnet || isOllama || isMlx || isClaudeCli); }   // ollama: no key exists to ask about
     // Switching providers must drop any OTHER provider's in-flight device-code poll — a code minted for the
     // previous pick has no business connecting the new one's block. The active pick's own poll survives a re-click.
     cancelOAuthPolls(isOpenAI ? 'codex' : pickedProvider);   // the OPENAI card's sign-in IS the codex poll — keep it alive
