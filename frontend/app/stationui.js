@@ -4772,6 +4772,7 @@ const StationUI = typeof document === 'undefined' ? {} : (() => {
     { id: 'cerebras',      name: 'CEREBRAS',          endpoint: 'api.cerebras.ai/v1',         blurb: 'Cerebras API', live: true },
     { id: 'ollama',        name: 'OLLAMA',            endpoint: '127.0.0.1:11434/v1',         blurb: 'local models', live: true },
     { id: 'mlx',           name: 'MLX',               endpoint: '127.0.0.1:8080/v1',          blurb: 'local mlx server', live: true },
+    { id: 'mlx',           name: 'MLX',               endpoint: '127.0.0.1:8080/v1',          blurb: 'local mlx server', live: true },
     { id: 'claude-cli',    name: 'CLAUDE CODE',       endpoint: 'local `claude` command',     blurb: 'your Claude subscription', live: true },
     { id: 'custom',        name: 'CUSTOM',            endpoint: 'any /v1 base URL',           blurb: 'bring your endpoint', live: true }
   ];

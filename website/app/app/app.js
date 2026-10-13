@@ -828,6 +828,7 @@ const App = (() => {
       starnet: 'STARNET MANAGED',
       ollama: 'OLLAMA',
       mlx: 'MLX',
+      mlx: 'MLX',
       'claude-cli': 'CLAUDE CODE',
       custom: 'CUSTOM'
     };
@@ -854,6 +855,7 @@ const App = (() => {
     // managed credits — its bearer is the linked device token, never a key the user pastes
     if (p === 'starnet' || p === 'starnet-cloud' || p === 'managed') return 'starnet';
     if (p === 'ollama' || p === 'ollama-local') return 'ollama';
+    if (p === 'mlx' || p === 'mlx-lm' || p === 'omlx') return 'mlx';
     if (p === 'mlx' || p === 'mlx-lm' || p === 'omlx') return 'mlx';
     if (p === 'claude-cli' || p === 'claude-code' || p === 'claude-code-cli') return 'claude-cli';
     if (p === 'custom' || p === 'openai-compatible' || p === 'local' || p === 'vllm' || p === 'lmstudio') return 'custom';
@@ -1617,6 +1619,7 @@ const App = (() => {
     cerebras: ['llama-4-scout-17b-16e-instruct', 'llama3.1-8b', 'qwen-3-coder-480b'],
     ollama: ['qwen3:8b', 'llama3.1', 'qwen2.5-coder', 'mistral'],
     mlx: ['qwen2.5-coder-32b-instruct-4bit', 'llama-3.1-8b-instruct', 'mistral-nemo-instruct-2407'],
+    mlx: ['qwen2.5-coder-32b-instruct-4bit', 'llama-3.1-8b-instruct', 'mistral-nemo-instruct-2407'],
     'claude-cli': ['claude-sonnet-5-5', 'claude-opus-5-5', 'claude-haiku-4-5-20251001'],   // [0] = the default pick; the live catalog adds the rest
     openrouter: ['gpt-5.5', 'anthropic/claude-sonnet-4.6', 'anthropic/claude-opus-4.8', 'openai/gpt-5', 'google/gemini-2.5-pro'],
     // #93: STARNET MANAGED's catalog is the routed vendor/model lineup — a bare 'gpt-5.5' (the openrouter row it used
@@ -1677,6 +1680,15 @@ const App = (() => {
         os.textContent = list.length
           ? '● ollama detected on this machine · ' + list.length + ' local model' + (list.length === 1 ? '' : 's') + ' ready'
           : '○ ollama not detected yet — install it from ollama.com, pull a model, and it will show up here';
+      }
+    }
+
+    if (p === 'mlx' && pickedProvider === 'mlx') {
+      const os = el('mlx-status');
+      if (os) {
+        os.textContent = list.length
+          ? '● mlx detected on this machine · ' + list.length + ' local model' + (list.length === 1 ? '' : 's') + ' ready'
+          : '○ mlx not detected yet — install it, load a model, and it will show up here';
       }
     }
 
@@ -2058,7 +2070,9 @@ const App = (() => {
     // repainted by loadModels() from the sidecar's live catalog for 127.0.0.1:11434.
     const isOllama = pickedProvider === 'ollama';
     const isMlx = pickedProvider === 'mlx';
+    const isMlx = pickedProvider === 'mlx';
     { const ob = el('ollama-block'); if (ob) ob.classList.toggle('hidden', !isOllama); }
+    { const mb = el('mlx-block'); if (mb) mb.classList.toggle('hidden', !isMlx); }
     { const mb = el('mlx-block'); if (mb) mb.classList.toggle('hidden', !isMlx); }
     const isClaudeCli = pickedProvider === 'claude-cli';
     { const cb = el('claude-cli-block'); if (cb) cb.classList.toggle('hidden', !isClaudeCli); }

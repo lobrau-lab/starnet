@@ -25,6 +25,7 @@ const KeyCTA = (() => {
     if (p === 'grok' || p === 'grok-oauth' || p === 'supergrok') return 'grok';
     if (p === 'kimi' || p === 'moonshot' || p === 'kimi-for-coding') return 'kimi';
     if (p === 'ollama' || p === 'ollama-local') return 'ollama';
+    if (p === 'mlx' || p === 'mlx-lm' || p === 'omlx') return 'mlx';
     if (p === 'claude-cli' || p === 'claude-code' || p === 'claude-code-cli') return 'claude-cli';
     if (p === 'custom' || p === 'openai-compatible' || p === 'local' || p === 'vllm' || p === 'lmstudio') return 'custom';
     return p;
@@ -32,7 +33,7 @@ const KeyCTA = (() => {
   function providerNeedsKey(p) {
     p = normProv(p);
     // codex/grok/kimi are keyless OAuth sign-ins; ollama/custom are keyless-by-design endpoints.
-    return p !== 'codex' && p !== 'grok' && p !== 'kimi' && p !== 'ollama' && p !== 'custom' && p !== 'claude-cli';
+    return p !== 'codex' && p !== 'grok' && p !== 'kimi' && p !== 'ollama' && p !== 'mlx' && p !== 'custom' && p !== 'claude-cli';
   }
   function activeProvider() {
     return normProv((typeof Harness !== 'undefined' && Harness.getProv) ? Harness.getProv() : 'openrouter');
@@ -111,7 +112,22 @@ const KeyCTA = (() => {
       return ok;
     });
   }
-  function freeLabel() { return ollamaReady ? '◇ RUN FREE LOCALLY (OLLAMA)' : '◇ SET UP OLLAMA (FREE · LOCAL)'; }
+
+  let mlxReady = null;
+  let mlxProbing = false;
+  let mlxProbedAt = 0;
+  function probeMlx(force) {
+    if (mlxProbing) return Promise.resolve(mlxReady);
+    if (!force && mlxReady !== null && (Date.now() - mlxProbedAt) < OLLAMA_REPROBE_MS) return Promise.resolve(mlxReady);
+    mlxProbing = true;
+    return Promise.resolve().then(() => Harness.probeProvider('mlx')).then(r => !!(r && r.reachable)).catch(() => false).then(ok => {
+      mlxProbing = false; mlxReady = ok; mlxProbedAt = Date.now();
+      if (ok !== mlxReady || force) render();
+      return ok;
+    });
+  }
+
+  function freeLabel() { return (ollamaReady || mlxReady) ? '◇ RUN FREE LOCALLY (OLLAMA / MLX)' : '◇ SET UP OLLAMA / MLX (FREE · LOCAL)'; }
   function paintFreeLabel() {
     const b = el('key-cta'); if (!b) return;
     const f = b.querySelector('.key-cta-free'); if (f) f.textContent = freeLabel();
@@ -121,7 +137,7 @@ const KeyCTA = (() => {
   function useOllama() {
     return probeOllama(true).then(ok => {
       if (!ok) {
-        try { if (typeof StationUI !== 'undefined' && StationUI.notify) StationUI.notify('ollama isn’t answering on this machine yet — install it from ollama.com, pull a model, then pick OLLAMA here', 'bad'); } catch (_) {}
+        try { if (typeof StationUI !== 'undefined' && StationUI.notify) StationUI.notify('ollama/mlx isn’t answering on this machine yet — install one, pull a model, then pick it here', 'bad'); } catch (_) {}
         openSettings();
         return false;
       }
@@ -201,7 +217,7 @@ const KeyCTA = (() => {
       '<span class="key-cta-acts">' +
         '<button type="button" class="key-cta-act">⚙ ADD IN SETTINGS</button>' +
         '<button type="button" class="key-cta-alt">⇄ USE A DIFFERENT PROVIDER</button>' +
-        '<button type="button" class="key-cta-free">◇ SET UP OLLAMA (FREE · LOCAL)</button>' +
+        '<button type="button" class="key-cta-free">◇ SET UP OLLAMA / MLX (FREE · LOCAL)</button>' +
       '</span>';
     b.querySelector('.key-cta-act').addEventListener('click', ev => { ev.stopPropagation(); fixGap(); });
     b.querySelector('.key-cta-alt').addEventListener('click', openSettings);
@@ -222,7 +238,7 @@ const KeyCTA = (() => {
     b.querySelector('.key-cta-act').textContent = primaryLabel(gap);
     paintFreeLabel();
     b.hidden = false;
-    probeOllama(false);   // keep the free-door label honest (cached 30s; repaints itself when the answer lands)
+    probeOllama(false); probeMlx(false);  // keep the free-door label honest (cached 30s; repaints itself when the answer lands)
     speakOnce();   // deliver the diegetic agent line once COMMS is free (no-op after it fires or once a key lands)
   }
 

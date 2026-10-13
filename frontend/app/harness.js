@@ -406,6 +406,7 @@ const Harness = (() => {
     if (p === 'starnet' || p === 'starnet-cloud' || p === 'managed') return 'starnet';
     if (p === 'ollama' || p === 'ollama-local') return 'ollama';
     if (p === 'mlx' || p === 'mlx-lm' || p === 'omlx') return 'mlx';
+    if (p === 'mlx' || p === 'mlx-lm' || p === 'omlx') return 'mlx';
     if (p === 'claude-cli' || p === 'claude-code' || p === 'claude-code-cli') return 'claude-cli';
     if (p === 'custom' || p === 'openai-compatible' || p === 'local' || p === 'vllm' || p === 'lmstudio') return 'custom';
     return 'openrouter';
