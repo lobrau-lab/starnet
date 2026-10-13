@@ -18,7 +18,7 @@
   "expectedClaimCount": 37,
   "releaseSurface": {
     "algorithm": "sha256",
-    "sourceCommit": "ed94053bd997d69d422d35ced16b754378659ba3",
+    "sourceCommit": "7a5cfdec77c8c73cf261532016521ae3bcd18bf9",
     "pathSetSha256": "02b89ce2d893cfb89a028e02d127dfe9f73466048d2fc0c7572bba244cdfea2f",
     "files": [
       {
@@ -153,8 +153,8 @@
       },
       {
         "path": "frontend/agent-station-demo.html",
-        "bytes": 86406,
-        "sha256": "48cc9c2dcf83e1081580bff13f17391189c53b44a1e7bdf6a52d2cee84877aab"
+        "bytes": 87031,
+        "sha256": "aa7cbb9993425186bf8d6358f7510f0f8211bfd3de618505b577bc0d27bb558a"
       },
       {
         "path": "frontend/app/agentid.js",
@@ -173,8 +173,8 @@
       },
       {
         "path": "frontend/app/app.js",
-        "bytes": 434544,
-        "sha256": "2e1b6e66ee2bf91f895718ba11e943db35b32b04d03b63a63fb3e8eabbe8cebb"
+        "bytes": 435302,
+        "sha256": "ea5fccc1b50d32817f5bff69804704a12f6dea3b90b7b8b4e4df0f5b9024bfc2"
       },
       {
         "path": "frontend/app/approved-sheet-effects.js",
@@ -558,8 +558,8 @@
       },
       {
         "path": "frontend/app/harness.js",
-        "bytes": 106430,
-        "sha256": "07e99d2818f1a805a22711cf366de5fa6d7e1e14e93ff2c171f2d5ee678bb561"
+        "bytes": 106574,
+        "sha256": "41ad490bcacff5f613d0c1a7771e376a4d66b2ae1aaa6152b24e684c4bd2214b"
       },
       {
         "path": "frontend/app/hint.js",
@@ -1173,8 +1173,8 @@
       },
       {
         "path": "frontend/app/stationui.js",
-        "bytes": 847437,
-        "sha256": "2aa4e6d9c8fb5a5835d9c3505263a62ac63cc74c589e04614a7cdc24e637af2a"
+        "bytes": 847694,
+        "sha256": "c2b35acafcee99698ce54f172e8f2c214fbaa3562b7954068d11e3d98b6afec3"
       },
       {
         "path": "frontend/app/stepin.js",
@@ -1808,8 +1808,8 @@
       },
       {
         "path": "frontend/index.html",
-        "bytes": 98746,
-        "sha256": "6e1927fad1aa45bbe9f447bf86abc1df88a34f74b5cd6f979987ac8298427add"
+        "bytes": 99371,
+        "sha256": "b009d7003d3f74a49dd661e39ea68dfd98d45881cc9d4d607e420d65ccd65e96"
       },
       {
         "path": "frontend/js/arcade.js",
