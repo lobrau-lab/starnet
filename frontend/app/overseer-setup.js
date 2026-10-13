@@ -7,7 +7,7 @@ window.OverseerSetup = (() => {
   const providers = {
     grok: ['Grok','Sign in'], kimi: ['Kimi','Sign in'], openrouter: ['OpenRouter','API key'],
     openai: ['OpenAI','ChatGPT or API key'], anthropic: ['Anthropic','API key'], gemini: ['Gemini','API key'],
-    ollama: ['Ollama','Free · local'], xai: ['xAI','API key'], groq: ['Groq','API key'],
+    ollama: ['Ollama','Free · local'], mlx: ['MLX','Free · local'], xai: ['xAI','API key'], groq: ['Groq','API key'],
     mistral: ['Mistral','API key'], deepseek: ['DeepSeek','API key'], together: ['Together','API key'],
     fireworks: ['Fireworks','API key'], perplexity: ['Perplexity','API key'], cerebras: ['Cerebras','API key'],
     custom: ['Custom','Your endpoint'], 'claude-cli': ['Claude Code','Your Claude subscription']
@@ -17,7 +17,7 @@ window.OverseerSetup = (() => {
     if (title) title.textContent = provider === 'starnet' ? 'Your StarNet account' : (providers[provider]?.[0] || 'Provider');
     const help = el('ov-connection-help');
     if (help) help.textContent = provider === 'starnet' ? 'Confirm your account in the browser, then choose a model.'
-      : provider === 'ollama' ? 'Choose a model installed on this computer.'
+      : (provider === 'ollama' || provider === 'mlx') ? 'Choose a model installed on this computer.'
       : provider === 'claude-cli' ? 'Sign in with your Claude subscription, then choose a model.'
       : provider === 'custom' ? 'Enter your endpoint, then choose or enter a model ID.'
       : provider === 'openai' ? 'Sign in with ChatGPT or add an OpenAI API key.'

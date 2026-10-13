@@ -332,7 +332,7 @@
          this ladder runs on the model-call path and "the local service broke" is the claim that owes proof. */
       if (s >= 500) {
         if (/overloaded|over capacity|temporarily unavailable|try again later/.test(low)) return 'provider_server_error';
-        if (/\b(anthropic|openai|openrouter|google|gemini|grok|xai|kimi|codex|deepseek|mistral|groq|ollama)\b/.test(low)) return 'provider_server_error';
+        if (/\b(anthropic|openai|openrouter|google|gemini|grok|xai|kimi|codex|deepseek|mistral|groq|ollama|mlx)\b/.test(low)) return 'provider_server_error';
         return /sidecar http/.test(low) ? 'server_error' : 'provider_server_error';
       }
       if (s === 400 && REJECTED_KEY_RE.test(low)) return 'auth';
@@ -444,7 +444,7 @@
         // ladder: a sidecar-prefixed 5xx with no provider name/phrasing in the body is the local service's own.
         if (kind === 'provider_server_error' && /sidecar http/.test(raw.toLowerCase())
             && !/overloaded|over capacity|temporarily unavailable|try again later/.test(raw.toLowerCase())
-            && !/\b(anthropic|openai|openrouter|google|gemini|grok|xai|kimi|codex|deepseek|mistral|groq|ollama)\b/.test(raw.toLowerCase())) {
+            && !/\b(anthropic|openai|openrouter|google|gemini|grok|xai|kimi|codex|deepseek|mistral|groq|ollama|mlx)\b/.test(raw.toLowerCase())) {
           kind = 'server_error';
         }
       } catch (_) { kind = kindFromRaw(raw, status); }

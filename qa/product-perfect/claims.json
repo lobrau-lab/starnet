@@ -18,7 +18,7 @@
   "expectedClaimCount": 37,
   "releaseSurface": {
     "algorithm": "sha256",
-    "sourceCommit": "ed94053bd997d69d422d35ced16b754378659ba3",
+    "sourceCommit": "a1e96458795a84a36be98f6832027af8d830e3f9",
     "pathSetSha256": "02b89ce2d893cfb89a028e02d127dfe9f73466048d2fc0c7572bba244cdfea2f",
     "files": [
       {
@@ -153,8 +153,8 @@
       },
       {
         "path": "frontend/agent-station-demo.html",
-        "bytes": 86406,
-        "sha256": "48cc9c2dcf83e1081580bff13f17391189c53b44a1e7bdf6a52d2cee84877aab"
+        "bytes": 87656,
+        "sha256": "6a094e46c7ed337c9c29b4e343ac5de256f8bac658ce56d9150e1eb510cc647f"
       },
       {
         "path": "frontend/app/agentid.js",
@@ -173,8 +173,8 @@
       },
       {
         "path": "frontend/app/app.js",
-        "bytes": 434544,
-        "sha256": "2e1b6e66ee2bf91f895718ba11e943db35b32b04d03b63a63fb3e8eabbe8cebb"
+        "bytes": 435992,
+        "sha256": "a7f26b0e768d61e93abe3f54cf6a20b76e3aa8a54bbc1e7926fd4b41f9391e19"
       },
       {
         "path": "frontend/app/approved-sheet-effects.js",
@@ -503,8 +503,8 @@
       },
       {
         "path": "frontend/app/friendlyerror.js",
-        "bytes": 57728,
-        "sha256": "30163adfa55e7c7fe0efdea98b8531f9d5c3e394e3aaaf21d47decf3e0b43388"
+        "bytes": 57736,
+        "sha256": "1fbe9cb15fed89fd66197fd0132ab4a5cc5120c4731aed5b4208adce6a5b6d56"
       },
       {
         "path": "frontend/app/fullscreen.js",
@@ -558,8 +558,8 @@
       },
       {
         "path": "frontend/app/harness.js",
-        "bytes": 106430,
-        "sha256": "07e99d2818f1a805a22711cf366de5fa6d7e1e14e93ff2c171f2d5ee678bb561"
+        "bytes": 106643,
+        "sha256": "878eb9d302858a1b61d8bd71ecdea688c5b912b8c221db79de04264bcb1e6bc1"
       },
       {
         "path": "frontend/app/hint.js",
@@ -613,8 +613,8 @@
       },
       {
         "path": "frontend/app/keycta.js",
-        "bytes": 14657,
-        "sha256": "00d78a87bb913ce8607fc22fbbb5f9d003d76144e091d638af69041258428e45"
+        "bytes": 15351,
+        "sha256": "ba555ee25525e7390429b30483f2fcb09e5d90697ba14524671d3131c2810487"
       },
       {
         "path": "frontend/app/launchmemory.js",
@@ -688,8 +688,8 @@
       },
       {
         "path": "frontend/app/modeldock.js",
-        "bytes": 55371,
-        "sha256": "d78eb98ccc99e879246fc6b34dd5f8103ad89b851c2458422d0f1d788f0ee0df"
+        "bytes": 55490,
+        "sha256": "4f338740d7d595ad043be5cf2999fa4739085d807a04cdeb6289176f792020a6"
       },
       {
         "path": "frontend/app/modelpicker.js",
@@ -728,8 +728,8 @@
       },
       {
         "path": "frontend/app/overseer-setup.js",
-        "bytes": 7892,
-        "sha256": "efcb55391a443354f89a3fd8dd9ecf412ba7ba9b95e01335cda66ba2c4e34718"
+        "bytes": 7946,
+        "sha256": "23b2e2652652cb9cc32a98cc786a98936ec4d69cbc51119cdb086a4f13ab1e33"
       },
       {
         "path": "frontend/app/overseer.js",
@@ -1173,8 +1173,8 @@
       },
       {
         "path": "frontend/app/stationui.js",
-        "bytes": 847437,
-        "sha256": "2aa4e6d9c8fb5a5835d9c3505263a62ac63cc74c589e04614a7cdc24e637af2a"
+        "bytes": 847829,
+        "sha256": "9fd363a1a5ce3b216909f0d3ee8a3122345a88d86361b483632a7200a1a00b10"
       },
       {
         "path": "frontend/app/stepin.js",
@@ -1808,8 +1808,8 @@
       },
       {
         "path": "frontend/index.html",
-        "bytes": 98746,
-        "sha256": "6e1927fad1aa45bbe9f447bf86abc1df88a34f74b5cd6f979987ac8298427add"
+        "bytes": 99996,
+        "sha256": "4be21e54cf1ad106a4077661ecd615cffb3e97eb43d66319fa459d002de15200"
       },
       {
         "path": "frontend/js/arcade.js",
