@@ -153,7 +153,8 @@ function git(repoRoot, args, options = {}) {
     const stderr = Buffer.isBuffer(result.stderr)
       ? result.stderr.toString('utf8').trim()
       : text(result.stderr).trim();
-    throw new Error(result.error ? result.error.message : (stderr || 'git command failed'));
+    const cmd = ['git', ...args].join(' ');
+    throw new Error(result.error ? result.error.message : (stderr || ('git command failed: ' + cmd)));
   }
   return result.stdout;
 }
@@ -161,7 +162,16 @@ function git(repoRoot, args, options = {}) {
 const RESOLVED_COMMITS = new Map();
 
 export function resolveCandidateCommit(repoRoot = REPO_ROOT, candidate = 'HEAD') {
+  if (Array.isArray(candidate)) {
+    throw new Error('candidate must be a single revision string, not an array');
+  }
   const requested = text(candidate || 'HEAD').trim();
+  if (!requested) {
+    throw new Error('candidate revision is empty; expected HEAD or a single commit/ref');
+  }
+  if (/[\s,]/.test(requested)) {
+    throw new Error('candidate must be a single revision token without whitespace or commas: ' + JSON.stringify(requested));
+  }
   const cacheKey = path.resolve(repoRoot) + '\0' + requested;
   const exactRequested = /^[0-9a-f]{40}$/i.test(requested);
   if (exactRequested && RESOLVED_COMMITS.has(cacheKey)) return RESOLVED_COMMITS.get(cacheKey);
