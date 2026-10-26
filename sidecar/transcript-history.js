@@ -38,8 +38,8 @@ function wordTokens(v) {
   return out.filter(t => t.length <= TOKEN_MAX);
 }
 function tokenize(v) { return Array.from(new Set(wordTokens(v))); }
-function segmentName(n) { return 'segment-' + String(n).padStart(6, '0') + '.jsonl'; }
-function indexName(n) { return 'segment-' + String(n).padStart(6, '0') + '.index.json'; }
+function segmentName(n) { return 'segment-' + String(num(n)).padStart(6, '0') + '.jsonl'; }
+function indexName(n) { return 'segment-' + String(num(n)).padStart(6, '0') + '.index.json'; }
 function clone(v) { return Object.assign({}, v); }
 function publicRow(v) { const out = clone(v); delete out.legacyKey; return out; }
 function indexHash(index) { return crypto.createHash('sha256').update(JSON.stringify(index)).digest('hex'); }
