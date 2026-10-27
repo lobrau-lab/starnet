@@ -33,7 +33,13 @@ async function plugin(id, source) {
   await fsp.mkdir(DIR, { recursive: true });
   const logs = [];
   const storeCalls = [];
-  const store = { op: async (id, op, key, value) => { storeCalls.push({ id, op, key, value }); return op === 'get' ? { ok: true, value: 'stored:' + key } : { ok: true, value: null }; } };
+  const storeWaiters = new Set();
+  const store = { op: async (id, op, key, value) => {
+    const c = { id, op, key, value };
+    storeCalls.push(c);
+    for (const w of storeWaiters) w(c);
+    return op === 'get' ? { ok: true, value: 'stored:' + key } : { ok: true, value: null };
+  } };
   let clock = 1000;
   const rt = makePluginRuntime({ fork: cp.fork, workerPath: WORKER, store, now: () => clock, onLog: (id, line) => logs.push(id + ' ' + line), timeouts: { callMs: 1500, toolMs: 1500, hookMs: 1500, startMs: 5000 } });
   try {
@@ -225,7 +231,23 @@ async function plugin(id, source) {
       let err = null; try { await p; } catch (e) { err = e; }
       A.ok(err && /stopped/.test(err.message), 'the call settles as stopped the moment the run is stopped');
       A.ok(Date.now() - t0 < 1200, 'without waiting out the tool timeout (' + (Date.now() - t0) + ' ms)');
-      for (let i = 0; i < 50 && !storeCalls.some(c => c.id === 'slow' && c.key === 'saw'); i++) await new Promise(r => setTimeout(r, 20));
+      if (!storeCalls.some(c => c.id === 'slow' && c.key === 'saw')) {
+        await new Promise(r => {
+          let w;
+          const timeout = setTimeout(() => {
+            storeWaiters.delete(w);
+            r();
+          }, 1000);
+          w = (c) => {
+            if (c.id === 'slow' && c.key === 'saw') {
+              clearTimeout(timeout);
+              storeWaiters.delete(w);
+              r();
+            }
+          };
+          storeWaiters.add(w);
+        });
+      }
       A.ok(storeCalls.some(c => c.id === 'slow' && c.key === 'saw' && c.value === 'aborted'), 'the tool inside the plugin process saw ctx.signal abort');
       let pre = null; try { await rt.callTool('slow', 'wait_forever', {}, {}, ac.signal); } catch (e) { pre = e; }
       A.ok(pre && /stopped/.test(pre.message), 'an already-stopped run never starts a plugin tool');
